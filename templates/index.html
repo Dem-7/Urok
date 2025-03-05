@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Случайные цитаты</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+        #quote-box {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            background-color: #f9f9f9;
+        }
+        .quote-text {
+            font-style: italic;
+            font-size: 1.2em;
+            color: #333;
+        }
+        .author {
+            font-weight: bold;
+            text-align: right;
+            margin-top: 10px;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Случайная цитата</h1>
+    <div id="quote-box">
+        <div class="quote-text" id="quote-text"></div>
+        <div class="author" id="author"></div>
+    </div>
+    <button onclick="fetchQuote()">Получить новую цитату</button>
+    <div id="error-message" class="error"></div>
+
+    <script>
+        async function fetchQuote() {
+            try {
+                const response = await fetch('/get_quote');
+                const data = await response.json();
+
+                const errorElement = document.getElementById('error-message');
+                const quoteText = document.getElementById('quote-text');
+                const author = document.getElementById('author');
+
+                if (response.ok) {
+                    quoteText.textContent = data.quote;
+                    author.textContent = `— ${data.author}`;
+                    errorElement.textContent = '';
+                } else {
+                    throw new Error(data.error || 'Неизвестная ошибка');
+                }
+            } catch (error) {
+                document.getElementById('error-message').textContent = error.message;
+            }
+        }
+
+        // Загрузить цитату при запуске
+        window.onload = fetchQuote;
+    </script>
+</body>
+</html>
